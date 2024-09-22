@@ -4,7 +4,7 @@ import postgres from "postgres";
 
 import * as schema from "./schema";
 
-export const sql = new SQLDatabase("db", {
+export const sql = new SQLDatabase("t3-encore", {
   migrations: "./plugins",
 });
 
