@@ -1,5 +1,4 @@
-import { db } from "~encore/clients";
-import { generateState } from "arctic";
+import { generateState, OAuth2RequestError } from "arctic";
 import { eq } from "drizzle-orm";
 import log from "encore.dev/log";
 import {
@@ -12,6 +11,7 @@ import {
   setCookie,
 } from "h3";
 
+import { db } from "../../../db/client";
 import { User } from "../../../db/schema";
 import { lucia } from "../authentication.config";
 import {
@@ -54,6 +54,7 @@ export const discordAuthCallbackHandler = eventHandler(async (event) => {
       .from(User)
       .where(eq(User.email, userResponse.email));
     if (existingUser[0]) {
+      log.info("Exists", existingUser);
       const session = await lucia.createSession(existingUser[0].id, {});
       appendHeader(
         event,
@@ -67,6 +68,7 @@ export const discordAuthCallbackHandler = eventHandler(async (event) => {
       .values({ name: userResponse.global_name, email: userResponse.email })
       .returning();
     if (!user[0]) {
+      log.info("Created", user);
       throw createError({
         status: 500,
         statusMessage: "Server Error",
@@ -82,10 +84,18 @@ export const discordAuthCallbackHandler = eventHandler(async (event) => {
     return sendRedirect(event, "/auth/me");
   } catch (err) {
     log.error(err);
+    if (
+      err instanceof OAuth2RequestError &&
+      err.message === "bad_verification_code"
+    ) {
+      throw createError({
+        status: 400,
+        statusMessage: "Bad Request",
+        message: "Invalid login request",
+      });
+    }
     throw createError({
-      status: 400,
-      statusMessage: "Bad Request",
-      message: "Invalid login request",
+      status: 500,
     });
   }
 });
