@@ -12,12 +12,24 @@ export const lucia = new Lucia(adapter, {
       secure: false,
     },
   },
+  getUserAttributes: (attributes) => {
+    return {
+      name: attributes.name,
+      email: attributes.name,
+    };
+  },
 });
 
 declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
+    DatabaseUserAttributes: DatabaseUserAttributes;
   }
+}
+
+interface DatabaseUserAttributes {
+  name: string;
+  email: string;
 }
 
 export const AUTH_SESSION_KEY = "auth_session";

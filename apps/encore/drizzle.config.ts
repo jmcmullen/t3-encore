@@ -7,8 +7,8 @@ if (!process.env.POSTGRES_URL) {
 const nonPoolingUrl = process.env.POSTGRES_URL.replace(":6543", ":5432");
 
 export default {
-  schema: "./db/schema.ts",
-  out: "./db/migrations",
+  schema: "./src/db/schema.ts",
+  out: "./src/db/migrations",
   dialect: "postgresql",
   dbCredentials: { url: nonPoolingUrl },
 } satisfies Config;
