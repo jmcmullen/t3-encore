@@ -6,6 +6,7 @@ import {
   toNodeListener,
 } from "h3";
 
+import { authLogOutHandler } from "./authentication.handler";
 import {
   discordAuthCallbackHandler,
   discordAuthHandler,
@@ -16,6 +17,7 @@ export const authRouter = createRouter();
 
 authRouter.get("/auth/discord", discordAuthHandler);
 authRouter.get("/auth/discord/callback", discordAuthCallbackHandler);
+authRouter.get("/auth/logout", authLogOutHandler);
 
 authApp.use(authRouter);
 

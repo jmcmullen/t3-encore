@@ -14,7 +14,10 @@ import {
 import { db } from "../../../db/client";
 import { User } from "../../../db/schema";
 import { lucia } from "../authentication.config";
+import { redirectErrorUrl, redirectUrl } from "../authentication.handler";
 import {
+  COOKIE_OPTIONS,
+  COOKIE_REDIRECT_KEY,
   COOKIE_STATE_KEY,
   discord,
   DiscordUser,
@@ -22,29 +25,30 @@ import {
 } from "./discord.config";
 
 export const discordAuthHandler = eventHandler(async (event) => {
+  const { redirect } = getQuery(event);
   const state = generateState();
   const url = await discord.createAuthorizationURL(state, {
     scopes: ["identify", "email"],
   });
   setCookie(event, COOKIE_STATE_KEY, state, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
+    ...COOKIE_OPTIONS,
     sameSite: "lax",
   });
+  if (redirect) {
+    setCookie(event, COOKIE_REDIRECT_KEY, redirect as string, {
+      ...COOKIE_OPTIONS,
+      sameSite: "lax",
+    });
+  }
   return sendRedirect(event, url.toString());
 });
 
 export const discordAuthCallbackHandler = eventHandler(async (event) => {
   const { code, state } = getQuery(event);
+  const redirect = getCookie(event, COOKIE_REDIRECT_KEY);
   const storedState = getCookie(event, COOKIE_STATE_KEY);
   if (!code || !state || !storedState || state !== storedState) {
-    throw createError({
-      status: 400,
-      statusMessage: "Bad Request",
-      message: "Invalid authentication request",
-    });
+    throw new Error("Invalid state");
   }
   try {
     const tokens = await discord.validateAuthorizationCode(code as string);
@@ -54,26 +58,23 @@ export const discordAuthCallbackHandler = eventHandler(async (event) => {
       .from(User)
       .where(eq(User.email, userResponse.email));
     if (existingUser[0]) {
-      log.info("Exists", existingUser);
+      if (!userResponse.verified) {
+        throw new Error("Email is not verified");
+      }
       const session = await lucia.createSession(existingUser[0].id, {});
       appendHeader(
         event,
         "Set-Cookie",
         lucia.createSessionCookie(session.id).serialize(),
       );
-      return sendRedirect(event, "/auth/me");
+      return sendRedirect(event, redirectUrl(session.id, redirect));
     }
     const user = await db
       .insert(User)
       .values({ name: userResponse.global_name, email: userResponse.email })
       .returning();
     if (!user[0]) {
-      log.info("Created", user);
-      throw createError({
-        status: 500,
-        statusMessage: "Server Error",
-        message: "Unable to create user",
-      });
+      throw new Error("Unable to create user");
     }
     const session = await lucia.createSession(user[0].id, {});
     appendHeader(
@@ -81,21 +82,11 @@ export const discordAuthCallbackHandler = eventHandler(async (event) => {
       "Set-Cookie",
       lucia.createSessionCookie(session.id).serialize(),
     );
-    return sendRedirect(event, "/auth/me");
+    return sendRedirect(event, redirectUrl(session.id, redirect));
   } catch (err) {
     log.error(err);
-    if (
-      err instanceof OAuth2RequestError &&
-      err.message === "bad_verification_code"
-    ) {
-      throw createError({
-        status: 400,
-        statusMessage: "Bad Request",
-        message: "Invalid login request",
-      });
+    if (err instanceof Error) {
+      return sendRedirect(event, redirectErrorUrl(redirect));
     }
-    throw createError({
-      status: 500,
-    });
   }
 });

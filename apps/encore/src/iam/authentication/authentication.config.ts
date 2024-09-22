@@ -6,10 +6,13 @@ import { Session, User } from "../../db/schema";
 
 const adapter = new DrizzlePostgreSQLAdapter(db, Session, User);
 
+export const AUTH_SESSION_KEY = "auth_session";
+
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
+    name: AUTH_SESSION_KEY,
     attributes: {
-      secure: false,
+      sameSite: "lax",
     },
   },
   getUserAttributes: (attributes) => {
@@ -44,5 +47,3 @@ export interface User {
   name: string;
   email: string;
 }
-
-export const AUTH_SESSION_KEY = "auth_session";

@@ -8,15 +8,12 @@ import { Environment } from "../lib/client";
 import getRequestClient from "../lib/getRequestClient";
 
 export async function AuthShowcase() {
+  const baseUrl = env.NEXT_PUBLIC_ENCORE_URL ?? Environment("production");
   const token = cookies().get("auth_session")?.value ?? "";
   const encoreClient = getRequestClient();
   const { user, session } = await encoreClient.iam.currentUser({
     authorization: `Bearer ${token}`,
   });
-  const baseUrl =
-    env.NODE_ENV === "development"
-      ? "http://localhost:3000/api/encore/auth/discord"
-      : Environment("production");
 
   if (!session || !user) {
     return (
@@ -35,7 +32,7 @@ export async function AuthShowcase() {
       </p>
 
       <form>
-        <Link href={`${baseUrl}/auth/discord`}>
+        <Link href={`${baseUrl}/auth/logout`}>
           <Button size="lg">Sign out</Button>
         </Link>
       </form>
