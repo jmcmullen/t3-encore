@@ -1,4 +1,5 @@
 import { api } from "encore.dev/api";
+import log from "encore.dev/log";
 
 import { lucia } from "./authentication/authentication.config";
 import {
@@ -15,6 +16,7 @@ export const currentUser = api(
   { expose: true, method: "GET", path: "/iam/session" },
   async (params: AuthParams): Promise<CurrentSessionResponse> => {
     const sessionId = extractSessionId(params);
+
     if (sessionId) {
       const response = await lucia.validateSession(sessionId);
       if (response.session && response.user) {

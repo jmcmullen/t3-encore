@@ -1,6 +1,6 @@
 import { env } from "process";
+import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { Button } from "@acme/ui/button";
 
@@ -8,11 +8,14 @@ import { Environment } from "../lib/client";
 import getRequestClient from "../lib/getRequestClient";
 
 export async function AuthShowcase() {
+  const token = cookies().get("auth_session")?.value ?? "";
   const encoreClient = getRequestClient();
-  const { user, session } = await encoreClient.iam.currentUser({});
+  const { user, session } = await encoreClient.iam.currentUser({
+    authorization: `Bearer ${token}`,
+  });
   const baseUrl =
     env.NODE_ENV === "development"
-      ? "http://127.0.0.1:4000"
+      ? "http://localhost:3000/api/encore/auth/discord"
       : Environment("production");
 
   if (!session || !user) {

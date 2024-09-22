@@ -1,5 +1,6 @@
 import { APIError, Header } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
+import log from "encore.dev/log";
 
 import { lucia } from "./authentication.config";
 
@@ -10,10 +11,12 @@ export interface AuthParams {
 
 export const extractSessionId = (params: AuthParams): string | null => {
   if (params.cookies) {
-    return lucia.readSessionCookie(params.cookies);
+    const sessionId = lucia.readSessionCookie(params.cookies);
+    if (sessionId) return sessionId;
   }
   if (params.authorization) {
-    return lucia.readBearerToken(params.authorization);
+    const sessionId = lucia.readBearerToken(params.authorization);
+    if (sessionId) return sessionId;
   }
   return null;
 };

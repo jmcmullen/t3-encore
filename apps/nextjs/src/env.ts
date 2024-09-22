@@ -8,6 +8,7 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
+    NEXT_PUBLIC_ENCORE_URL: z.string().url(),
   },
   /**
    * Specify your server-side environment variables schema here.
@@ -29,6 +30,7 @@ export const env = createEnv({
    */
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_ENCORE_URL: process.env.NEXT_PUBLIC_ENCORE_URL,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

@@ -14,6 +14,17 @@ const config = {
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
+
+  async rewrites() {
+    return process.env.NODE_ENV === "development"
+      ? [
+          {
+            source: "/api/encore/:path*",
+            destination: "http://localhost:4000/:path*",
+          },
+        ]
+      : [];
+  },
 };
 
 export default config;

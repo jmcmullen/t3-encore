@@ -20,7 +20,7 @@ import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
 import type { posts } from "../lib/client";
-import useRequestClient from "../lib/useRequestClient";
+import getRequestClient from "../lib/getRequestClient";
 
 export function CreatePostForm() {
   const form = useForm({
@@ -31,7 +31,7 @@ export function CreatePostForm() {
   });
 
   const queryClient = useQueryClient();
-  const encoreClient = useRequestClient();
+  const encoreClient = getRequestClient();
 
   const createPost = useMutation({
     mutationFn: (params: posts.CreatePostParams) =>
@@ -84,7 +84,7 @@ export function CreatePostForm() {
 }
 
 export function PostList() {
-  const encoreClient = useRequestClient();
+  const encoreClient = getRequestClient();
 
   const { data } = useSuspenseQuery({
     queryKey: ["posts"],
@@ -116,7 +116,7 @@ export function PostList() {
 
 export function PostCard(props: { post: posts.Post }) {
   const queryClient = useQueryClient();
-  const encoreClient = useRequestClient();
+  const encoreClient = getRequestClient();
 
   const deletePost = useMutation({
     mutationFn: (id: string) => encoreClient.posts.remove(id),

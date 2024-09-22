@@ -18,12 +18,6 @@ catalogs:
     '@trpc/server':
       specifier: ^11.0.0-rc.477
       version: 11.0.0-rc.477
-    '@types/node':
-      specifier: ^20.14.15
-      version: 20.14.15
-    encore.dev:
-      specifier: ^1.41.4
-      version: 1.41.4
     eslint:
       specifier: ^9.9.0
       version: 9.9.0
@@ -287,9 +281,6 @@ importers:
       superjson:
         specifier: 2.2.1
         version: 2.2.1
-      universal-cookie:
-        specifier: ^7.2.0
-        version: 7.2.0
       zod:
         specifier: 'catalog:'
         version: 3.23.8
@@ -6838,9 +6829,6 @@ packages:
   unique-string@2.0.0:
     resolution: {integrity: sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==}
     engines: {node: '>=8'}
-
-  universal-cookie@7.2.0:
-    resolution: {integrity: sha512-PvcyflJAYACJKr28HABxkGemML5vafHmiL4ICe3e+BEKXRMt0GaFLZhAwgv637kFFnnfiSJ8e6jknrKkMrU+PQ==}
 
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
@@ -14461,11 +14449,6 @@ snapshots:
   unique-string@2.0.0:
     dependencies:
       crypto-random-string: 2.0.0
-
-  universal-cookie@7.2.0:
-    dependencies:
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
 
   universalify@0.1.2: {}
 
