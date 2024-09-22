@@ -6,46 +6,18 @@ settings:
 
 catalogs:
   default:
-    '@tanstack/react-query':
-      specifier: ^5.51.23
-      version: 5.51.23
-    '@trpc/client':
-      specifier: ^11.0.0-rc.477
-      version: 11.0.0-rc.477
-    '@trpc/react-query':
-      specifier: ^11.0.0-rc.477
-      version: 11.0.0-rc.477
-    '@trpc/server':
-      specifier: ^11.0.0-rc.477
-      version: 11.0.0-rc.477
     eslint:
       specifier: ^9.9.0
       version: 9.9.0
     prettier:
       specifier: ^3.3.3
       version: 3.3.3
-    tailwindcss:
-      specifier: ^3.4.10
-      version: 3.4.10
     typescript:
       specifier: ^5.5.4
       version: 5.5.4
     zod:
       specifier: ^3.23.8
       version: 3.23.8
-  react18:
-    '@types/react':
-      specifier: ^18.3.3
-      version: 18.3.3
-    '@types/react-dom':
-      specifier: ^18.3.0
-      version: 18.3.0
-    react:
-      specifier: 18.3.1
-      version: 18.3.1
-    react-dom:
-      specifier: 18.3.1
-      version: 18.3.1
 
 importers:
 
@@ -410,15 +382,18 @@ importers:
 
   packages/db:
     dependencies:
-      '@vercel/postgres':
-        specifier: ^0.9.0
-        version: 0.9.0
       drizzle-orm:
         specifier: ^0.33.0
         version: 0.33.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@types/pg@8.11.6)(@types/react@18.3.3)(@vercel/postgres@0.9.0)(mysql2@3.11.0)(postgres@3.4.4)(react@18.3.1)
       drizzle-zod:
         specifier: ^0.5.1
         version: 0.5.1(drizzle-orm@0.33.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@types/pg@8.11.6)(@types/react@18.3.3)(@vercel/postgres@0.9.0)(mysql2@3.11.0)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8)
+      encore.dev:
+        specifier: ^1.41.4
+        version: 1.41.4
+      postgres:
+        specifier: ^3.4.4
+        version: 3.4.4
       zod:
         specifier: 'catalog:'
         version: 3.23.8
@@ -4232,6 +4207,10 @@ packages:
   encodeurl@1.0.2:
     resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
     engines: {node: '>= 0.8'}
+
+  encore.dev@1.41.4:
+    resolution: {integrity: sha512-yMbPILBBiOE0DwFnN9HR0c6DkyyofmYS4uZ4B9uCtArfGfXxim06jc8qlBo8GdbWk45u3zjBrNZ2wUrUPQollA==}
+    engines: {node: '>=18.0.0'}
 
   end-of-stream@1.4.4:
     resolution: {integrity: sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==}
@@ -9846,6 +9825,7 @@ snapshots:
   '@neondatabase/serverless@0.9.4':
     dependencies:
       '@types/pg': 8.11.6
+    optional: true
 
   '@netlify/functions@2.8.1':
     dependencies:
@@ -10978,9 +10958,10 @@ snapshots:
 
   '@types/pg@8.11.6':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.3.0
       pg-protocol: 1.6.1
       pg-types: 4.0.2
+    optional: true
 
   '@types/prop-types@15.7.12': {}
 
@@ -11130,6 +11111,7 @@ snapshots:
       bufferutil: 4.0.8
       utf-8-validate: 6.0.4
       ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4)
+    optional: true
 
   '@web3-storage/multipart-parser@1.0.0': {}
 
@@ -11565,6 +11547,7 @@ snapshots:
   bufferutil@4.0.8:
     dependencies:
       node-gyp-build: 4.8.1
+    optional: true
 
   builtin-modules@3.3.0: {}
 
@@ -12153,6 +12136,8 @@ snapshots:
   emoji-regex@9.2.2: {}
 
   encodeurl@1.0.2: {}
+
+  encore.dev@1.41.4: {}
 
   end-of-stream@1.4.4:
     dependencies:
@@ -14629,7 +14614,8 @@ snapshots:
       define-properties: 1.2.1
       es-object-atoms: 1.0.0
 
-  obuf@1.1.2: {}
+  obuf@1.1.2:
+    optional: true
 
   ofetch@1.3.4:
     dependencies:
@@ -14851,11 +14837,14 @@ snapshots:
 
   perfect-debounce@1.0.0: {}
 
-  pg-int8@1.0.1: {}
+  pg-int8@1.0.1:
+    optional: true
 
-  pg-numeric@1.0.2: {}
+  pg-numeric@1.0.2:
+    optional: true
 
-  pg-protocol@1.6.1: {}
+  pg-protocol@1.6.1:
+    optional: true
 
   pg-types@4.0.2:
     dependencies:
@@ -14866,6 +14855,7 @@ snapshots:
       postgres-date: 2.1.0
       postgres-interval: 3.0.0
       postgres-range: 1.1.4
+    optional: true
 
   picocolors@1.0.1: {}
 
@@ -14951,20 +14941,24 @@ snapshots:
       picocolors: 1.0.1
       source-map-js: 1.2.0
 
-  postgres-array@3.0.2: {}
+  postgres-array@3.0.2:
+    optional: true
 
   postgres-bytea@3.0.0:
     dependencies:
       obuf: 1.1.2
-
-  postgres-date@2.1.0: {}
-
-  postgres-interval@3.0.0: {}
-
-  postgres-range@1.1.4: {}
-
-  postgres@3.4.4:
     optional: true
+
+  postgres-date@2.1.0:
+    optional: true
+
+  postgres-interval@3.0.0:
+    optional: true
+
+  postgres-range@1.1.4:
+    optional: true
+
+  postgres@3.4.4: {}
 
   preact-render-to-string@5.2.3(preact@10.11.3):
     dependencies:
@@ -16446,6 +16440,7 @@ snapshots:
   utf-8-validate@6.0.4:
     dependencies:
       node-gyp-build: 4.8.1
+    optional: true
 
   util-deprecate@1.0.2: {}
 
