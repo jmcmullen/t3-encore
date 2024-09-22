@@ -4,8 +4,8 @@ import postgres from "postgres";
 
 import * as schema from "./schema";
 
-export const sql = new SQLDatabase("url", {
-  migrations: "./migrations",
+export const sql = new SQLDatabase("db", {
+  migrations: "./plugins",
 });
 
 const connectionString = sql.connectionString;
