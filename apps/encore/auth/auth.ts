@@ -1,5 +1,10 @@
-import { APIError, Gateway, Header, api } from "encore.dev/api";
+import { IncomingMessage } from "http";
+import { Auth } from "@auth/core";
+import Discord from "@auth/core/providers/discord";
+import { api, APIError, Gateway, Header, RawRequest } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
+import { secret } from "encore.dev/config";
+import { eventHandler, toWebRequest } from "h3";
 
 interface LoginParams {
   email: string;
@@ -13,7 +18,7 @@ export const login = api(
     // ... create and sign a token ...
 
     return { token: "dummy-token" };
-  }
+  },
 );
 
 interface AuthParams {
@@ -35,7 +40,24 @@ export const myAuthHandler = authHandler(
     }
 
     return { userID: "dummy-user-id" };
-  }
+  },
+);
+
+export const authProxy = api(
+  { expose: true, method: "*", path: "/proxy/!rest" },
+  eventHandler(async (event) =>
+    Auth(toWebRequest(event), {
+      secret: secret("AUTH_SECRET")(),
+      // trustHost: !!process.env.VERCEL,
+      redirectProxyUrl: secret("AUTH_REDIRECT_PROXY_URL")(),
+      providers: [
+        Discord({
+          clientId: secret("AUTH_DISCORD_ID")(),
+          clientSecret: secret("AUTH_DISCORD_SECRET")(),
+        }),
+      ],
+    }),
+  ),
 );
 
 export const gateway = new Gateway({ authHandler: myAuthHandler });

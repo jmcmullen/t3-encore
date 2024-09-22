@@ -10,8 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen": "encore gen client next-js-test-ts-9wvi --output=./frontend/app/lib/client.ts --env=staging",
-    "gen:local": "encore gen client next-js-test-ts-9wvi --output=./frontend/app/lib/client.ts --env=local"
+    "gen": "encore gen client t3-encore-eph2 --output=./frontend/app/lib/client.ts --env=staging",
+    "gen:local": "encore gen client t3-encore-eph2 --output=./frontend/app/lib/client.ts --env=local"
   },
   "devDependencies": {
     "next": "^14.2.3",
