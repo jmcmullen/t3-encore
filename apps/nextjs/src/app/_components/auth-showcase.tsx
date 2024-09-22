@@ -1,21 +1,26 @@
-import { auth, signIn, signOut } from "@acme/auth";
+import { env } from "process";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
 import { Button } from "@acme/ui/button";
 
-export async function AuthShowcase() {
-  const session = await auth();
+import { Environment } from "../lib/client";
+import getRequestClient from "../lib/getRequestClient";
 
-  if (!session) {
+export async function AuthShowcase() {
+  const encoreClient = getRequestClient();
+  const { user, session } = await encoreClient.iam.currentUser({});
+  const baseUrl =
+    env.NODE_ENV === "development"
+      ? "http://127.0.0.1:4000"
+      : Environment("production");
+
+  if (!session || !user) {
     return (
       <form>
-        <Button
-          size="lg"
-          formAction={async () => {
-            "use server";
-            await signIn("discord");
-          }}
-        >
-          Sign in with Discord
-        </Button>
+        <Link href={`${baseUrl}/auth/discord`}>
+          <Button size="lg">Sign in with Discord</Button>
+        </Link>
       </form>
     );
   }
@@ -23,19 +28,13 @@ export async function AuthShowcase() {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">
-        <span>Logged in as {session.user.name}</span>
+        <span>Logged in as {user.name}</span>
       </p>
 
       <form>
-        <Button
-          size="lg"
-          formAction={async () => {
-            "use server";
-            await signOut();
-          }}
-        >
-          Sign out
-        </Button>
+        <Link href={`${baseUrl}/auth/discord`}>
+          <Button size="lg">Sign out</Button>
+        </Link>
       </form>
     </div>
   );

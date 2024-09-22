@@ -32,4 +32,17 @@ interface DatabaseUserAttributes {
   email: string;
 }
 
+export interface Session {
+  id: string;
+  userId: string;
+  expiresAt: Date;
+  fresh: boolean;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export const AUTH_SESSION_KEY = "auth_session";

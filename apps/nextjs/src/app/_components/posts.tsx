@@ -1,7 +1,12 @@
 "use client";
 
-import type { RouterOutputs } from "@acme/api";
-import { CreatePostSchema } from "@acme/db/schema";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+
 import { cn } from "@acme/ui";
 import { Button } from "@acme/ui/button";
 import {
@@ -10,34 +15,33 @@ import {
   FormField,
   FormItem,
   FormMessage,
-  useForm,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
-import { api } from "~/trpc/react";
+import type { posts } from "../lib/client";
+import useRequestClient from "../lib/useRequestClient";
 
 export function CreatePostForm() {
   const form = useForm({
-    schema: CreatePostSchema,
     defaultValues: {
       content: "",
       title: "",
     },
   });
 
-  const utils = api.useUtils();
-  const createPost = api.post.create.useMutation({
+  const queryClient = useQueryClient();
+  const encoreClient = useRequestClient();
+
+  const createPost = useMutation({
+    mutationFn: (params: posts.CreatePostParams) =>
+      encoreClient.posts.create(params),
     onSuccess: async () => {
       form.reset();
-      await utils.post.invalidate();
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (err) => {
-      toast.error(
-        err.data?.code === "UNAUTHORIZED"
-          ? "You must be logged in to post"
-          : "Failed to create post",
-      );
+      toast.error(err.message);
     },
   });
 
@@ -80,9 +84,14 @@ export function CreatePostForm() {
 }
 
 export function PostList() {
-  const [posts] = api.post.all.useSuspenseQuery();
+  const encoreClient = useRequestClient();
 
-  if (posts.length === 0) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["posts"],
+    queryFn: () => encoreClient.posts.list(),
+  });
+
+  if (data.posts.length === 0) {
     return (
       <div className="relative flex w-full flex-col gap-4">
         <PostCardSkeleton pulse={false} />
@@ -98,27 +107,24 @@ export function PostList() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {posts.map((p) => {
+      {data.posts.map((p) => {
         return <PostCard key={p.id} post={p} />;
       })}
     </div>
   );
 }
 
-export function PostCard(props: {
-  post: RouterOutputs["post"]["all"][number];
-}) {
-  const utils = api.useUtils();
-  const deletePost = api.post.delete.useMutation({
+export function PostCard(props: { post: posts.Post }) {
+  const queryClient = useQueryClient();
+  const encoreClient = useRequestClient();
+
+  const deletePost = useMutation({
+    mutationFn: (id: string) => encoreClient.posts.remove(id),
     onSuccess: async () => {
-      await utils.post.invalidate();
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (err) => {
-      toast.error(
-        err.data?.code === "UNAUTHORIZED"
-          ? "You must be logged in to delete a post"
-          : "Failed to delete post",
-      );
+      toast.error(err.message);
     },
   });
 

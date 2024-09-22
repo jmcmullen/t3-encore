@@ -1,19 +1,33 @@
-import { eventHandler, getCookie } from "h3";
+import { APIError, Header } from "encore.dev/api";
+import { authHandler } from "encore.dev/auth";
 
-import { AUTH_SESSION_KEY, lucia } from "./authentication.config";
+import { lucia } from "./authentication.config";
 
-export const currentUserAuthHandler = eventHandler(async (event) => {
-  const sessionId = getCookie(event, AUTH_SESSION_KEY);
-  if (sessionId) {
-    return lucia.validateSession(sessionId);
+export interface AuthParams {
+  authorization?: Header<"Authorization">;
+  cookies?: Header<"Cookie">;
+}
+
+export const extractSessionId = (params: AuthParams): string | null => {
+  if (params.cookies) {
+    return lucia.readSessionCookie(params.cookies);
+  }
+  if (params.authorization) {
+    return lucia.readBearerToken(params.authorization);
   }
   return null;
-});
+};
 
-export const logoutHandler = eventHandler(async (event) => {
-  const sessionId = getCookie(event, AUTH_SESSION_KEY);
-  if (sessionId) {
-    return lucia.invalidateSession(sessionId);
-  }
-  return null;
-});
+export const luciaHandler = authHandler(
+  async (params: AuthParams): Promise<{ userID: string }> => {
+    const sessionId = extractSessionId(params);
+    if (sessionId) {
+      const { user } = await lucia.validateSession(sessionId);
+      if (user?.id) {
+        return { userID: user.id };
+      }
+    }
+
+    throw APIError.unauthenticated("Not logged in");
+  },
+);

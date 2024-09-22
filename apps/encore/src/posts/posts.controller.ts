@@ -7,14 +7,15 @@ import { omit } from "radash";
 
 import { db } from "../db/client";
 import { lucia } from "../iam/authentication/authentication.config";
-import { auth } from "../iam/authentication/authentication.controller";
+import { luciaHandler } from "../iam/authentication/authentication.handler";
 import { Post } from "./../db/schema";
 import {
-  CreatePostDto,
+  CreatePostParams,
+  DeletePostParams,
   PostListResponse,
   PostResponse,
   toEntity,
-  UpdatePostDto,
+  UpdatePostParams,
 } from "./posts.interface";
 
 export const list = api(
@@ -41,7 +42,7 @@ export const findOne = api(
 
 export const create = api(
   { expose: true, auth: true, method: "POST", path: "/posts" },
-  async (params: CreatePostDto): Promise<PostResponse> => {
+  async (params: CreatePostParams): Promise<PostResponse> => {
     const result = await db.insert(Post).values(params).returning();
     if (!result) throw APIError.unavailable(`Unable to create post`);
     return { post: toEntity(result[0]) };
@@ -50,7 +51,7 @@ export const create = api(
 
 export const update = api(
   { expose: true, auth: true, method: "PATCH", path: "/posts" },
-  async (params: UpdatePostDto): Promise<PostResponse> => {
+  async (params: UpdatePostParams): Promise<PostResponse> => {
     const result = await db
       .update(Post)
       .set(omit(params, ["id"]))
@@ -63,42 +64,13 @@ export const update = api(
 
 export const remove = api(
   { expose: true, auth: true, method: "POST", path: "/posts/:id" },
-  async (params: { id: string }): Promise<PostResponse> => {
+  async (params: DeletePostParams): Promise<PostResponse> => {
     const result = await db
       .delete(Post)
       .where(eq(Post.id, params.id))
       .returning();
     if (!result) throw APIError.unavailable(`Unable to delete post`);
     return { post: toEntity(result[0]) };
-  },
-);
-
-interface AuthParams {
-  authorization?: Header<"Authorization">;
-  cookies?: Header<"Cookie">;
-}
-
-export const luciaHandler = authHandler(
-  async (params: AuthParams): Promise<{ userID: string }> => {
-    const extractSessionId = (): string | null => {
-      if (params.cookies) {
-        return lucia.readSessionCookie(params.cookies);
-      }
-      if (params.authorization) {
-        return lucia.readBearerToken(params.authorization);
-      }
-      return null;
-    };
-
-    const sessionId = extractSessionId();
-    if (sessionId) {
-      const { user } = await lucia.validateSession(sessionId);
-      if (user?.id) {
-        return { userID: user.id };
-      }
-    }
-
-    throw APIError.unauthenticated("Not logged in");
   },
 );
 
