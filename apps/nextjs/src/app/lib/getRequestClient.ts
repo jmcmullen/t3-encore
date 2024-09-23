@@ -1,8 +1,8 @@
-import { env } from "~/env";
-import Client, { Environment } from "./client";
+import { getBaseUrl } from "./base-url";
+import Client from "./client";
 
 const getRequestClient = () => {
-  const clientEnv = env.NEXT_PUBLIC_ENCORE_URL || Environment("production");
+  const clientEnv = `${getBaseUrl()}/api/encore`;
 
   return new Client(clientEnv, {});
 };

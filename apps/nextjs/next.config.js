@@ -20,7 +20,7 @@ const config = {
       ? [
           {
             source: "/api/encore/:path*",
-            destination: "http://localhost:4000/:path*",
+            destination: `${process.env.NEXT_PUBLIC_ENCORE_URL}/:path*`,
           },
         ]
       : [];

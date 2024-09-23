@@ -1,14 +1,13 @@
-import { env } from "process";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
 import { Button } from "@acme/ui/button";
 
-import { Environment } from "../lib/client";
+import { getBaseUrl } from "../lib/base-url";
 import getRequestClient from "../lib/getRequestClient";
 
 export async function AuthShowcase() {
-  const baseUrl = env.NEXT_PUBLIC_ENCORE_URL ?? Environment("production");
+  const baseUrl = `${getBaseUrl()}/api/encore`;
   const token = cookies().get("auth_session")?.value ?? "";
   const encoreClient = getRequestClient();
   const { user, session } = await encoreClient.iam.currentUser({
