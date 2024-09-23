@@ -139,6 +139,7 @@ export namespace iam {
             // Convert our params into the objects we need for the request
             const headers = makeRecord<string, string>({
                 authorization: params.authorization,
+                cookie:        params.cookies,
             })
 
             // Now make the actual call to the API
@@ -150,6 +151,7 @@ export namespace iam {
             // Convert our params into the objects we need for the request
             const headers = makeRecord<string, string>({
                 authorization: params.authorization,
+                cookie:        params.cookies,
             })
 
             // Now make the actual call to the API
@@ -265,15 +267,18 @@ export namespace posts {
 
 export namespace authentication {
     export interface AuthParams {
-        authorization?: string
+        authorization: string
+        cookies: string
     }
 
     export interface AuthParams {
-        authorization?: string
+        authorization: string
+        cookies: string
     }
 
     export interface AuthParams {
-        authorization?: string
+        authorization: string
+        cookies: string
     }
 }
 
@@ -550,6 +555,7 @@ class BaseClient {
 
             data.headers = {};
             data.headers["authorization"] = authData.authorization;
+            data.headers["cookie"] = authData.cookies;
 
             return data;
         }
