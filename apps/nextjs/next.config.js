@@ -16,14 +16,12 @@ const config = {
   typescript: { ignoreBuildErrors: true },
 
   async rewrites() {
-    return process.env.NODE_ENV === "development"
-      ? [
-          {
-            source: "/api/encore/:path*",
-            destination: `${process.env.NEXT_PUBLIC_ENCORE_URL}/:path*`,
-          },
-        ]
-      : [];
+    return [
+      {
+        source: "/api/encore/:path*",
+        destination: `${process.env.NEXT_PUBLIC_ENCORE_URL}/:path*`,
+      },
+    ];
   },
 };
 
