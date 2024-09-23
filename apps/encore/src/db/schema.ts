@@ -18,12 +18,13 @@ export const User = pgTable("user", {
   id: text("id")
     .primaryKey()
     .default(sql`nanoid('user')`),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     withTimezone: true,
   }),
+  hashedPassword: varchar("hashedPassword", { length: 255 }),
   image: varchar("image", { length: 255 }),
 });
 

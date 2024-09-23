@@ -34,7 +34,7 @@ export interface LogOutResponse {
   success: boolean;
 }
 
-export const toEntity = ({
+export const toCurrentSessionEntity = ({
   user,
   session,
 }: {

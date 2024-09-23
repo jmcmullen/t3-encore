@@ -14,7 +14,7 @@ import {
   DeletePostParams,
   PostListResponse,
   PostResponse,
-  toEntity,
+  toPostEntity,
   UpdatePostParams,
 } from "./posts.interface";
 
@@ -25,7 +25,7 @@ export const list = api(
       orderBy: desc(Post.id),
       limit: 10,
     });
-    return { posts: results.map((post) => toEntity(post)) };
+    return { posts: results.map((post) => toPostEntity(post)) };
   },
 );
 
@@ -36,7 +36,7 @@ export const findOne = api(
       where: eq(Post.id, params.id),
     });
     if (!result) throw APIError.notFound(`Unable to find post: ${params.id}`);
-    return { post: toEntity(result) };
+    return { post: toPostEntity(result) };
   },
 );
 
@@ -45,7 +45,7 @@ export const create = api(
   async (params: CreatePostParams): Promise<PostResponse> => {
     const result = await db.insert(Post).values(params).returning();
     if (!result) throw APIError.unavailable(`Unable to create post`);
-    return { post: toEntity(result[0]) };
+    return { post: toPostEntity(result[0]) };
   },
 );
 
@@ -58,7 +58,7 @@ export const update = api(
       .where(eq(Post.id, params.id))
       .returning();
     if (!result) throw APIError.unavailable(`Unable to create post`);
-    return { post: toEntity(result[0]) };
+    return { post: toPostEntity(result[0]) };
   },
 );
 
@@ -70,7 +70,7 @@ export const remove = api(
       .where(eq(Post.id, params.id))
       .returning();
     if (!result) throw APIError.unavailable(`Unable to delete post`);
-    return { post: toEntity(result[0]) };
+    return { post: toPostEntity(result[0]) };
   },
 );
 

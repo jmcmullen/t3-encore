@@ -9,7 +9,7 @@ import {
 import {
   CurrentSessionResponse,
   LogOutResponse,
-  toEntity,
+  toCurrentSessionEntity,
 } from "./iam.interface";
 
 export const currentUser = api(
@@ -20,7 +20,7 @@ export const currentUser = api(
     if (sessionId) {
       const response = await lucia.validateSession(sessionId);
       if (response.session && response.user) {
-        return toEntity(response);
+        return toCurrentSessionEntity(response);
       }
     }
     return { user: null, session: null };

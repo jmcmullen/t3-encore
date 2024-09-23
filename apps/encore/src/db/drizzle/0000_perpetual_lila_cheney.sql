@@ -14,10 +14,12 @@ CREATE TABLE IF NOT EXISTS "session" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" text PRIMARY KEY DEFAULT nanoid('user') NOT NULL,
-	"name" varchar(255),
+	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"emailVerified" timestamp with time zone,
-	"image" varchar(255)
+	"hashedPassword" varchar(255),
+	"image" varchar(255),
+	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 DO $$ BEGIN

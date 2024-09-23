@@ -3,7 +3,6 @@ import { eq } from "drizzle-orm";
 import log from "encore.dev/log";
 import {
   appendHeader,
-  createError,
   eventHandler,
   getCookie,
   getQuery,

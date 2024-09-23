@@ -44,7 +44,7 @@ export interface PostListResponse {
   posts: Post[];
 }
 
-export const toEntity = (post: typeof DbPost.$inferSelect): Post => ({
+export const toPostEntity = (post: typeof DbPost.$inferSelect): Post => ({
   ...omit(post, ["updatedAt", "createdAt"]),
   createdAt: post.createdAt.toISOString(),
   updatedAt: post.updatedAt?.toISOString() ?? null,
