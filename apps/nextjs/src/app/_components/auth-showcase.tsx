@@ -7,7 +7,8 @@ import { getBaseUrl } from "../lib/base-url";
 import getRequestClient from "../lib/getRequestClient";
 
 export async function AuthShowcase() {
-  const baseUrl = `${getBaseUrl()}/api/encore`;
+  const baseUrl = getBaseUrl();
+  const encoreUrl = `${getBaseUrl()}/api/encore`;
   const token = cookies().get("auth_session")?.value ?? "";
   const encoreClient = getRequestClient();
   const { user, session } = await encoreClient.iam.currentUser({
@@ -17,7 +18,7 @@ export async function AuthShowcase() {
   if (!session || !user) {
     return (
       <form>
-        <Link href={`${baseUrl}/auth/discord`}>
+        <Link href={`${encoreUrl}/auth/discord?redirect=${baseUrl}`}>
           <Button size="lg">Sign in with Discord</Button>
         </Link>
       </form>
@@ -31,7 +32,7 @@ export async function AuthShowcase() {
       </p>
 
       <form>
-        <Link href={`${baseUrl}/auth/logout`}>
+        <Link href={`${encoreUrl}/auth/logout?redirect=${baseUrl}`}>
           <Button size="lg">Sign out</Button>
         </Link>
       </form>
